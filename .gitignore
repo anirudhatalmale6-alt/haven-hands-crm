@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+server.log
+.pytest_cache/
+
+# Client material and anything carrying real personal data -
+# never goes into the repository.
+client_docs/
+*.zip
+salary_schedule_*.pdf
+regenerated_*.pdf
+Haven_Hands_*.pdf
+sample-salary-schedule.xlsx
+demo-*.png

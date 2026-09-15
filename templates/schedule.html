@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haven Hands &mdash; Salary Payment Schedule</title>
+<style>
+  :root{
+    --navy:#1f3a5f; --ink:#1b2430; --muted:#64748b; --line:#dbe3ec;
+    --bg:#f4f6f9; --warn:#a33a00; --good:#14603c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{background:var(--navy);color:#fff;padding:14px 24px;display:flex;
+         align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  header h1{margin:0;font-size:16px;letter-spacing:.3px;font-weight:600}
+  header .tag{font-size:12px;opacity:.75}
+  .wrap{max-width:1480px;margin:0 auto;padding:18px 24px 48px}
+  .cols{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+  @media(max-width:1080px){.cols{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;
+        box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card h2{margin:0;padding:11px 15px;font-size:12px;text-transform:uppercase;
+           letter-spacing:.6px;color:var(--muted);border-bottom:1px solid var(--line)}
+  .card .body{padding:13px 15px}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+  input,select{width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:5px;
+               font:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid #bfd4ee;border-color:var(--navy)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+  .btns{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
+  button{padding:8px 13px;border-radius:5px;border:1px solid var(--navy);
+         background:var(--navy);color:#fff;font:600 13px/1 inherit;cursor:pointer}
+  button.ghost{background:#fff;color:var(--navy)}
+  .derived{background:#f8fafc;border:1px solid var(--line);border-radius:6px;
+           padding:10px 12px;margin-top:12px;font-size:12px;line-height:1.7}
+  .derived b{font-variant-numeric:tabular-nums}
+  .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  @media(max-width:760px){.sum{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+  .stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .stat .v{font-size:19px;font-weight:650;margin-top:3px;font-variant-numeric:tabular-nums}
+  .stat .v small{font-size:12px;font-weight:500;color:var(--muted)}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th,td{padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th{background:var(--navy);color:#fff;text-align:left;font-weight:600;
+           font-size:11.5px;letter-spacing:.3px;position:sticky;top:0}
+  tbody tr:nth-child(odd){background:#f8fafc}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.final td{background:#fff5ec}
+  tr.five td .sun{color:var(--good);font-weight:600}
+  .badge{display:inline-block;padding:1px 7px;border-radius:99px;font-size:11px;
+         font-weight:600;background:#fde8d7;color:var(--warn)}
+  tfoot td{font-weight:700;background:#eef2f7;border-top:2px solid var(--navy)}
+  .foot{margin-top:13px;font-size:12px;color:var(--muted);line-height:1.65}
+</style>
+</head>
+<body>
+<header>
+  <h1>Haven Hands &nbsp;&middot;&nbsp; Salary Payment Schedule</h1>
+  <span class="tag">EA Licence 25C3257 &nbsp;&middot;&nbsp; CRM calculation module</span>
+</header>
+
+<div class="wrap">
+<form method="post">
+<div class="cols">
+
+  <div>
+    <div class="card">
+      <h2>Case details</h2>
+      <div class="body">
+        <label>Name of Employer</label>
+        <input name="employer_name" value="{{ data.employer_name }}">
+        <label>Name of FDW</label>
+        <input name="fdw_name" value="{{ data.fdw_name }}">
+        <div class="two">
+          <div>
+            <label>Basic Salary (SGD)</label>
+            <input name="basic_salary" value="{{ data.basic_salary }}">
+          </div>
+          <div>
+            <label>Date of Commencement</label>
+            <input type="date" name="commencement_date" value="{{ data.commencement_date }}">
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label>Day Off Per Month</label>
+            <input name="days_off_per_month" value="{{ data.days_off_per_month }}">
+          </div>
+          <div>
+            <label>Rest day falls on</label>
+            <select name="rest_day_weekday">
+              {% for i in range(7) %}
+                <option value="{{ i }}" {{ 'selected' if data.rest_day_weekday|int == i }}>
+                  {{ weekday_names[i] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label>Total Placement Fees</label>
+            <input name="total_placement_fee" value="{{ data.total_placement_fee }}">
+          </div>
+          <div>
+            <label>Loan Months</label>
+            <input name="loan_months" value="{{ data.loan_months }}">
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label>Contract months</label>
+            <input name="contract_months" value="{{ data.contract_months }}">
+          </div>
+          <div>
+            <label>Salary per day</label>
+            <select name="daily_rate_rounding">
+              <option value="truncate" {{ 'selected' if data.daily_rate_rounding=='truncate' }}>
+                Truncate (26.78)</option>
+              <option value="half_up" {{ 'selected' if data.daily_rate_rounding=='half_up' }}>
+                Round (26.79)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="derived">
+          Salary per day &nbsp;<b>S${{ '{:,.2f}'.format(terms.daily_rate) }}</b>
+          &nbsp;= {{ '{:,.2f}'.format(terms.basic_salary) }} &divide; 26<br>
+          Agreed instalment &nbsp;<b>S${{ '{:,.2f}'.format(instalment) }}</b>
+          {%- if instalment > terms.basic_salary %}
+            &nbsp;&rarr; capped at the basic salary{% endif %}<br>
+          Fee cleared in &nbsp;<b>
+          {%- if totals.loan_cleared_in_month %}month {{ totals.loan_cleared_in_month }}
+          {%- else %}&mdash;{% endif %}</b>
+        </div>
+
+        <div class="btns">
+          <button type="submit">Recalculate</button>
+          <button class="ghost" type="submit" formaction="/schedule.pdf">PDF</button>
+          <button class="ghost" type="submit" formaction="/export.xlsx">Excel</button>
+          <button class="ghost" type="submit" formaction="/export.csv">CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sum">
+      <div class="stat"><div class="k">Total basic</div>
+        <div class="v"><small>S$</small>{{ '{:,.2f}'.format(totals.total_basic) }}</div></div>
+      <div class="stat"><div class="k">Off day comp</div>
+        <div class="v"><small>S$</small>{{ '{:,.2f}'.format(totals.total_off_day_comp) }}</div></div>
+      <div class="stat"><div class="k">Placement fee</div>
+        <div class="v"><small>S$</small>{{ '{:,.2f}'.format(totals.total_placement_fee) }}</div></div>
+      <div class="stat"><div class="k">Total received</div>
+        <div class="v"><small>S$</small>{{ '{:,.2f}'.format(totals.total_received) }}</div></div>
+    </div>
+
+    <div class="card">
+      <h2>{{ data.fdw_name }} &nbsp;&middot;&nbsp; employer {{ data.employer_name }}</h2>
+      <div class="scroll">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Period from</th><th>Date of Payment</th>
+          <th style="text-align:right">Basic Salary ($)</th>
+          <th style="text-align:right">{{ weekday_names[terms.rest_day_weekday] }}s</th>
+          <th style="text-align:right">Off days paid</th>
+          <th style="text-align:right">Off Day Comp ($)</th>
+          <th style="text-align:right">Placement Fee ($)</th>
+          <th style="text-align:right">Amount Received ($)</th>
+          <th style="text-align:right">Balance ($)</th>
+          <th>Remarks</th>
+        </tr></thead>
+        <tbody>
+        {% for r in rows %}
+          <tr class="{{ 'final' if r.is_final_instalment }}{{ ' five' if r.rest_days_in_period == 5 }}">
+            <td>{{ r.number }}</td>
+            <td>{{ r.period_start.strftime('%d-%m-%Y') }}</td>
+            <td>{{ r.payment_date.strftime('%d-%m-%Y') }}</td>
+            <td class="num">{{ '{:,.2f}'.format(r.basic_salary) }}</td>
+            <td class="num sun">{{ r.rest_days_in_period }}</td>
+            <td class="num">{{ r.off_days_compensated }}</td>
+            <td class="num">{{ '{:,.2f}'.format(r.off_day_comp) }}</td>
+            <td class="num">{{ '{:,.2f}'.format(r.placement_fee_deduction) if r.placement_fee_deduction else '&mdash;'|safe }}</td>
+            <td class="num"><b>{{ '{:,.2f}'.format(r.amount_received) }}</b></td>
+            <td class="num">{{ '{:,.2f}'.format(r.loan_balance_after) }}</td>
+            <td>{% if r.is_final_instalment %}<span class="badge">final instalment</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">Total</td>
+          <td class="num">{{ '{:,.2f}'.format(totals.total_basic) }}</td>
+          <td></td><td></td>
+          <td class="num">{{ '{:,.2f}'.format(totals.total_off_day_comp) }}</td>
+          <td class="num">{{ '{:,.2f}'.format(totals.total_placement_fee) }}</td>
+          <td class="num">{{ '{:,.2f}'.format(totals.total_received) }}</td>
+          <td></td><td></td>
+        </tr></tfoot>
+      </table>
+      </div>
+    </div>
+
+    <div class="foot">
+      The salary month for each payment ends on the payment date and begins the
+      day after the previous one &mdash; that is what decides whether a month
+      contains four or five {{ weekday_names[terms.rest_day_weekday] }}s, and so
+      whether {{ data.days_off_per_month }} or {{ data.days_off_per_month|int + 1 }}
+      off days are compensated. A deduction never exceeds the basic salary, so
+      the off day compensation always reaches the helper.
+    </div>
+  </div>
+
+</div>
+</form>
+</div>
+</body>
+</html>

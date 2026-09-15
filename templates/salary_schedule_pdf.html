@@ -1,0 +1,111 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @page { size: A4 portrait; margin: 12mm 10mm; }
+  *{box-sizing:border-box}
+  body{font:10px/1.35 "Helvetica Neue",Helvetica,Arial,sans-serif;color:#111;margin:0}
+  .licence{text-align:center;font-size:8px;letter-spacing:1.2px;color:#6b7280;
+           text-transform:uppercase;margin-bottom:2px}
+  h1{text-align:center;font-size:15px;letter-spacing:1.5px;margin:0 0 10px;
+     font-weight:700;text-transform:uppercase}
+  .hdr{width:100%;border-collapse:collapse;margin-bottom:10px}
+  .hdr td{padding:3px 6px;font-size:10px}
+  .hdr .lab{color:#374151;width:21%}
+  .hdr .val{font-weight:700;width:29%;border-bottom:.6px solid #9ca3af}
+  table.grid{width:100%;border-collapse:collapse}
+  table.grid th{background:#1f3a5f;color:#fff;font-size:8.5px;font-weight:600;
+                padding:5px 4px;border:.6px solid #1f3a5f;letter-spacing:.2px}
+  table.grid td{border:.6px solid #c8d2de;padding:4px;font-size:9.5px;text-align:center}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody tr:nth-child(even) td{background:#f6f8fb}
+  tr.total td{font-weight:700;background:#eef2f7;border-top:1.2px solid #1f3a5f}
+  td.sig{width:13%}
+  td.rem{width:17%;text-align:left;font-size:8px;color:#6b7280}
+  .decl{margin-top:12px;font-size:9px;font-weight:700;text-transform:uppercase;
+        line-height:1.5}
+  .signs{width:100%;margin-top:16px;border-collapse:collapse}
+  .signs td{width:50%;padding-top:2px;font-size:9.5px;vertical-align:bottom}
+  .signs .name{font-weight:700;padding-bottom:16px}
+  .signs .rule{border-top:.8px solid #374151;padding-top:3px;font-size:8px;
+               letter-spacing:.4px;color:#374151}
+  .ea{margin-top:20px;font-size:9px;line-height:1.7}
+  .ea .rule{border-top:.8px solid #374151;width:42%;padding-top:3px;font-size:8px;
+            letter-spacing:.4px;color:#374151;margin-top:14px}
+</style></head>
+<body>
+  <div class="licence">Haven Hands Pte. Ltd. &nbsp;|&nbsp; EA Licence No. {{ ea_licence }}</div>
+  <h1>Salary Payment Schedule</h1>
+
+  <table class="hdr">
+    <tr>
+      <td class="lab">Name of Employer</td><td class="val">{{ employer_name }}</td>
+      <td class="lab">Basic Salary</td><td class="val">SGD {{ '{:,.2f}'.format(terms.basic_salary) }}</td>
+    </tr>
+    <tr>
+      <td class="lab">Name of FDW</td><td class="val">{{ fdw_name }}</td>
+      <td class="lab">Salary Per Day</td><td class="val">SGD {{ '{:,.2f}'.format(terms.daily_rate) }}</td>
+    </tr>
+    <tr>
+      <td class="lab">Total Placement Fees</td><td class="val">SGD {{ '{:,.2f}'.format(terms.total_placement_fee) }}</td>
+      <td class="lab">Day Off Per Month</td><td class="val">{{ terms.days_off_per_month }}</td>
+    </tr>
+    <tr>
+      <td class="lab">Date of Commencement</td><td class="val">{{ terms.commencement_date.strftime('%d-%m-%Y') }}</td>
+      <td class="lab">Loan Months</td><td class="val">{{ terms.loan_months }}</td>
+    </tr>
+  </table>
+
+  <table class="grid">
+    <thead><tr>
+      <th style="width:4%">#</th>
+      <th style="width:13%">Date of Payment</th>
+      <th style="width:12%">Basic Salary ($)</th>
+      <th style="width:12%">Off Day Comp ($)</th>
+      <th style="width:12%">Placement Fee ($)</th>
+      <th style="width:13%">Amount Received ($)</th>
+      <th style="width:13%">FDW Signature</th>
+      <th style="width:17%">Remarks</th>
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ r.number }}</td>
+        <td>{{ r.payment_date.strftime('%d-%m-%Y') }}</td>
+        <td class="num">{{ '{:,.2f}'.format(r.basic_salary) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(r.off_day_comp) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(r.placement_fee_deduction) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(r.amount_received) }}</td>
+        <td class="sig"></td>
+        <td class="rem">{{ r.remarks }}</td>
+      </tr>
+    {% endfor %}
+      <tr class="total">
+        <td colspan="2">Total</td>
+        <td class="num">{{ '{:,.2f}'.format(totals.total_basic) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(totals.total_off_day_comp) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(totals.total_placement_fee) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(totals.total_received) }}</td>
+        <td></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="decl">
+    I hereby declare that I understand and agree with the monthly salary and
+    total amount of loan indicated above.
+  </div>
+
+  <table class="signs">
+    <tr><td class="name">{{ employer_name }}</td><td class="name">{{ fdw_name }}</td></tr>
+    <tr>
+      <td class="rule">NAME / SIGNATURE OF EMPLOYER</td>
+      <td class="rule">NAME / SIGNATURE OF FDW</td>
+    </tr>
+  </table>
+
+  <div class="ea">
+    Name / Signature: {{ ea_rep_name }}<br>
+    Registration No.: {{ ea_rep_reg_no }}
+    <div class="rule">WITNESSED BY EA REPRESENTATIVE</div>
+  </div>
+</body></html>
